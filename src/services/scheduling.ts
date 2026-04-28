@@ -1,6 +1,19 @@
 import { pool } from '../config/db.js';
 
+/**
+ * Stateless calculation engine for active educational content.
+ */
 export class SchedulingService {
+    /**
+     * Determines the currently active slide for a specific teacher and optional subject.
+     *
+     * Uses a deterministic modulo algorithm against the current epoch timestamp
+     * to resolve the "active" item in a continuous loop without requiring background workers.
+     *
+     * @param teacherId - The ID of the teacher broadcasting the content.
+     * @param subjectFilter - Optional string to isolate rotation to a specific subject.
+     * @returns An array of currently active content metadata, or null if nothing is active.
+     */
     static async getActiveContent(teacherId: number, subjectFilter?: string) {
         let query = `
             SELECT c.id, c.title, c.description, c.subject, c.file_url, c.file_type, 

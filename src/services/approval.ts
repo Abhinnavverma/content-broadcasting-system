@@ -1,6 +1,16 @@
 import { pool } from '../config/db.js';
 
+/**
+ * Manages the approval queue and state transitions for uploaded content.
+ */
 export class ApprovalService {
+    /**
+     * Retrieves paginated content pending administrative review.
+     *
+     * @param page - Target page index (1-based).
+     * @param limit - Maximum number of records per page.
+     * @returns Array of pending content rows attached to their uploader's name.
+     */
     static async getPendingContent(page: number = 1, limit: number = 10) {
         const offset = (page - 1) * limit;
 
@@ -16,6 +26,17 @@ export class ApprovalService {
         return result.rows;
     }
 
+    /**
+     * Transitions content state using optimistic concurrency control.
+     *
+     * Targets only rows currently marked as 'pending' mapping the state safely.
+     *
+     * @param contentId - Target record ID.
+     * @param principalId - ID of the reviewing administrator.
+     * @param status - The final decision ('approved' or 'rejected').
+     * @param rejectionReason - Required text rationale if the status is 'rejected'.
+     * @throws Error if content is missing, already processed, or lacks required rejection rationale.
+     */
     static async reviewContent(
         contentId: number,
         principalId: number,

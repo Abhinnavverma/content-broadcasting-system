@@ -13,6 +13,16 @@ interface UploadPayload {
     duration?: number;
 }
 
+/**
+ * Handles the transactional upload and initial scheduling of educational content.
+ *
+ * Wraps content insertion, slot initialization, and schedule queueing inside
+ * a strict PostgreSQL transaction to guarantee atomic data integrity.
+ *
+ * @param payload - The standardized upload metadata including verified URL and metrics.
+ * @returns Object containing a success message and the newly generated database ID.
+ * @throws Will rollback the entire transaction if any insertion or queue logic fails.
+ */
 export class ContentService {
     static async uploadContent(payload: UploadPayload) {
         const client = await pool.connect();
@@ -56,7 +66,7 @@ export class ContentService {
             const slotId = slotResult.rows[0].id;
 
             const orderResult = await client.query(
-                `SELECT COALESCE(MAX(rotation_order), 0) + 1 AS next_order FROM content_schedule WHERE slot_id = $1 FOR UPDATE`,
+                `SELECT COALESCE(MAX(rotation_order), 0) + 1 AS next_order FROM content_schedule WHERE slot_id = $1`,
                 [slotId],
             );
             const nextOrder = orderResult.rows[0].next_order;

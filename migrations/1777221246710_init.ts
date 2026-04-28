@@ -1,9 +1,9 @@
 import type { MigrationBuilder } from 'node-pg-migrate';
 /* eslint-disable camelcase */
 
-exports.shorthands = undefined;
+export const shorthands = undefined;
 
-exports.up = (pgm: MigrationBuilder) => {
+export async function up(pgm: MigrationBuilder): Promise<void> {
     // Users Table
     pgm.sql(`
     CREATE TABLE users (
@@ -64,9 +64,9 @@ exports.up = (pgm: MigrationBuilder) => {
     CREATE INDEX idx_content_subject ON content(subject);
     CREATE INDEX idx_schedule_slot ON content_schedule(slot_id);
   `);
-};
+}
 
-exports.down = (pgm: MigrationBuilder) => {
+export async function down(pgm: MigrationBuilder): Promise<void> {
     pgm.sql(`DROP INDEX IF EXISTS idx_schedule_slot;`);
     pgm.sql(`DROP INDEX IF EXISTS idx_content_subject;`);
     pgm.sql(`DROP INDEX IF EXISTS idx_content_status;`);
@@ -74,4 +74,4 @@ exports.down = (pgm: MigrationBuilder) => {
     pgm.sql(`DROP TABLE IF EXISTS content_slots CASCADE;`);
     pgm.sql(`DROP TABLE IF EXISTS content CASCADE;`);
     pgm.sql(`DROP TABLE IF EXISTS users CASCADE;`);
-};
+}

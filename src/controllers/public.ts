@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { SchedulingService } from '../services/scheduling.js';
 
+/**
+ * Read-only transport layer for student-facing APIs.
+ * Intentionally bypasses authentication middleware to allow public broadcasting.
+ */
 export class PublicController {
     static async getLiveContent(req: Request, res: Response) {
         try {
