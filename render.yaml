@@ -10,7 +10,7 @@ services:
     env: node
     plan: free
     buildCommand: npm install && npm run build
-    startCommand: npm run migrate && npm start
+    startCommand: npx node-pg-migrate -m dist/migrations up && npm start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
