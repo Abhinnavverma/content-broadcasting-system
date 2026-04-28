@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
+import approvalRoutes from './routes/approval.js';
 import { authenticate } from './middlewares/auth.js';
 
 /**
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/uploads', authenticate, express.static('uploads'));
+app.use('/api/approval', approvalRoutes);
 
 // Health check
 app.get('/health', (_, res) => {
