@@ -4,8 +4,15 @@ import { ApprovalService } from '../services/approval.js';
 export class ApprovalController {
     static async getPending(req: Request, res: Response) {
         try {
-            const pendingContent = await ApprovalService.getPendingContent();
-            return res.status(200).json({ data: pendingContent });
+            const page = parseInt(req.query.page as string, 10) || 1;
+            const limit = parseInt(req.query.limit as string, 10) || 10;
+
+            const pendingContent = await ApprovalService.getPendingContent(page, limit);
+
+            return res.status(200).json({
+                data: pendingContent,
+                meta: { page, limit, count: pendingContent.length },
+            });
         } catch (error) {
             console.error('[ApprovalController.getPending]', error);
             return res.status(500).json({ error: 'Failed to fetch pending content' });

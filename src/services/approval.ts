@@ -1,13 +1,17 @@
 import { pool } from '../config/db.js';
 
 export class ApprovalService {
-    static async getPendingContent() {
+    static async getPendingContent(page: number = 1, limit: number = 10) {
+        const offset = (page - 1) * limit;
+
         const result = await pool.query(
             `SELECT c.id, c.title, c.description, c.subject, c.file_url, c.start_time, c.end_time, u.name as teacher_name
              FROM content c
              JOIN users u ON c.uploaded_by = u.id
              WHERE c.status = 'pending'
-             ORDER BY c.created_at ASC`,
+             ORDER BY c.created_at ASC
+             LIMIT $1 OFFSET $2`,
+            [limit, offset],
         );
         return result.rows;
     }
