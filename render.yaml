@@ -2,11 +2,13 @@ databases:
   - name: broadcasting_db
     databaseName: broadcasting
     user: admin
+    plan: free
 
 services:
   - type: web
     name: backend-assignment
     env: node
+    plan: free
     buildCommand: npm install && npm run build
     startCommand: npm run migrate && npm start
     envVars:
