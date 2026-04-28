@@ -1,6 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
+import contentRoutes from './routes/content.js';
+import { authenticate } from './middlewares/auth.js';
 
 /**
  * Configure and assemble the main Express application.
@@ -17,6 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/content', contentRoutes);
+app.use('/uploads', authenticate, express.static('uploads'));
 
 // Health check
 app.get('/health', (_, res) => {
